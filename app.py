@@ -111,8 +111,9 @@ elif page == "Upload BRD":
         file_content = uploaded_file.getvalue().decode("utf-8")
         st.session_state.brd_content = file_content
         st.success("BRD uploaded successfully! You can now move to the 'User Stories' tab.")
-        st.session_state.page = "User Stories"
         # Removed st.rerun() to allow the success message to be displayed.
+        st.session_state.page = "User Stories"
+        st.rerun()
 
 # Tab 3: User Stories
 elif page == "User Stories":
@@ -131,6 +132,7 @@ elif page == "User Stories":
                     llm, messages = create_agent(system_prompt)
                     if llm:
                         st.session_state.user_stories = run_agent(llm, messages, brd_text_for_prompt)
+                        # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Acceptance Criteria"
                         st.rerun()
 
@@ -166,6 +168,7 @@ elif page == "Acceptance Criteria":
                     llm, messages = create_agent(system_prompt)
                     if llm:
                         st.session_state.acceptance_criteria = run_agent(llm, messages, st.session_state.user_stories)
+                        # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Test Cases"
                         st.rerun()
 
@@ -207,7 +210,7 @@ elif page == "Test Cases":
                     - Test Data
                     
                     User Stories & Acceptance Criteria:
-                    {st.session_state.user_cases}
+                    {st.session_state.user_stories}
                     {st.session_state.acceptance_criteria}
                     """
                     system_prompt = "You are a highly skilled QA engineer. Your task is to generate detailed and comprehensive test cases from user stories and acceptance criteria. Be thorough and consider both positive and negative test scenarios."
