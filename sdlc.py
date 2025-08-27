@@ -65,7 +65,7 @@ if st.session_state.tab == "Project Details":
         if submitted:
             st.success("Project details saved!")
             st.session_state.tab = "Upload BRD"
-            st.experimental_rerun()
+            st.rerun()
 
 # --- Upload BRD Tab ---
 elif st.session_state.tab == "Upload BRD":
@@ -77,7 +77,7 @@ elif st.session_state.tab == "Upload BRD":
             st.success("BRD uploaded successfully!")
             if st.button("Proceed to User Stories"):
                 st.session_state.tab = "User Stories"
-                st.experimental_rerun()
+                st.rerun()
         except Exception as e:
             st.error(f"Error reading file: {e}")
 
@@ -93,7 +93,7 @@ elif st.session_state.tab == "User Stories":
         st.markdown(get_download_link(st.session_state.user_stories, "user_stories.txt", "Download User Stories"), unsafe_allow_html=True)
         if st.button("Proceed to Acceptance Criteria"):
             st.session_state.tab = "Acceptance Criteria"
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.warning("Please upload a BRD in the previous step.")
 
@@ -109,7 +109,7 @@ elif st.session_state.tab == "Acceptance Criteria":
         st.markdown(get_download_link(st.session_state.acceptance_criteria, "acceptance_criteria.txt", "Download Acceptance Criteria"), unsafe_allow_html=True)
         if st.button("Proceed to Test Cases"):
             st.session_state.tab = "Test Cases"
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.warning("Please generate user stories first.")
 
@@ -125,7 +125,7 @@ elif st.session_state.tab == "Test Cases":
         st.markdown(get_download_link(st.session_state.test_cases, "test_cases.txt", "Download Test Cases"), unsafe_allow_html=True)
         if st.button("Proceed to Code Generation"):
             st.session_state.tab = "Code"
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.warning("Please generate acceptance criteria first.")
 
