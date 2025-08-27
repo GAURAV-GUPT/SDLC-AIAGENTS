@@ -110,9 +110,9 @@ elif page == "Upload BRD":
     if uploaded_file is not None:
         file_content = uploaded_file.getvalue().decode("utf-8")
         st.session_state.brd_content = file_content
-        st.success("BRD uploaded successfully! You can now move to the next tab.")
+        st.success("BRD uploaded successfully! You can now move to the 'User Stories' tab.")
         st.session_state.page = "User Stories"
-        st.rerun()
+        # Removed st.rerun() to allow the success message to be displayed.
 
 # Tab 3: User Stories
 elif page == "User Stories":
@@ -207,7 +207,7 @@ elif page == "Test Cases":
                     - Test Data
                     
                     User Stories & Acceptance Criteria:
-                    {st.session_state.user_stories}
+                    {st.session_state.user_cases}
                     {st.session_state.acceptance_criteria}
                     """
                     system_prompt = "You are a highly skilled QA engineer. Your task is to generate detailed and comprehensive test cases from user stories and acceptance criteria. Be thorough and consider both positive and negative test scenarios."
