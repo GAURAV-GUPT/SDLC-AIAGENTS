@@ -113,7 +113,7 @@ elif page == "Upload BRD":
         st.success("BRD uploaded successfully! You can now move to the 'User Stories' tab.")
         # Removed st.rerun() to allow the success message to be displayed.
         st.session_state.page = "User Stories"
-        st.rerun()
+#        st.rerun()
 
 # Tab 3: User Stories
 elif page == "User Stories":
@@ -134,7 +134,7 @@ elif page == "User Stories":
                         st.session_state.user_stories = run_agent(llm, messages, brd_text_for_prompt)
                         # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Acceptance Criteria"
-                        st.rerun()
+ #                       st.rerun()
 
         if st.session_state.user_stories:
             st.subheader("Generated User Stories")
@@ -170,7 +170,7 @@ elif page == "Acceptance Criteria":
                         st.session_state.acceptance_criteria = run_agent(llm, messages, st.session_state.user_stories)
                         # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Test Cases"
-                        st.rerun()
+  #                      st.rerun()
 
         if st.session_state.acceptance_criteria:
             st.subheader("Generated Acceptance Criteria")
@@ -218,7 +218,7 @@ elif page == "Test Cases":
                     if llm:
                         st.session_state.test_cases = run_agent(llm, messages, test_case_prompt)
                         st.session_state.page = "Code"
-                        st.rerun()
+   #                     st.rerun()
 
         if st.session_state.test_cases:
             st.subheader("Generated Test Cases")
