@@ -1,9 +1,11 @@
+# app.py
+
 import streamlit as st
 import os
 import tempfile
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from streamlit_mermaid import st_mermaid
+from streamlit_mermaid import st_mermaid # Import the mermaid component
 
 # Set up the page configuration
 st.set_page_config(layout="wide", page_title="Multi-Agent SDLC Manager")
@@ -77,7 +79,7 @@ page = st.sidebar.radio(
         "Acceptance Criteria",
         "Test Cases",
         "Code",
-        "Architecture Diagram"
+        "Architecture Diagram" # Added the new tab
     ],
     index=["Project Details", "Upload BRD", "User Stories", "Acceptance Criteria", "Test Cases", "Code", "Architecture Diagram"].index(st.session_state.page)
 )
@@ -101,9 +103,14 @@ if page == "Project Details":
     st.session_state.project_details["Start Date"] = st.date_input("Start Date", value=st.session_state.project_details.get("Start Date"))
     st.session_state.project_details["Planned End Date"] = st.date_input("Planned End Date", value=st.session_state.project_details.get("Planned End Date"))
     st.session_state.project_details["Budgeted Amount"] = st.number_input("Budgeted Amount", min_value=0, value=st.session_state.project_details.get("Budgeted Amount", 0))
-    # Add dropdown for programming language choices
-    programming_language_options = ["Python", "Java", ".NET", "React.js"]
-    st.session_state.project_details["Programming Language"] = st.selectbox("Programming Language", options=programming_language_options, index=programming_language_options.index(st.session_state.project_details.get("Programming Language", "Python")))
+    
+    # Dropdown for programming language choices
+    programming_language_options = ["Java", ".NET", "Python", "React.js"]
+    st.session_state.project_details["Programming Language"] = st.selectbox(
+        "Programming Language", 
+        options=programming_language_options, 
+        index=programming_language_options.index(st.session_state.project_details.get("Programming Language", "Python"))
+    )
 
 # Tab 2: Upload BRD
 elif page == "Upload BRD":
@@ -115,9 +122,7 @@ elif page == "Upload BRD":
         file_content = uploaded_file.getvalue().decode("utf-8")
         st.session_state.brd_content = file_content
         st.success("BRD uploaded successfully! You can now move to the 'User Stories' tab.")
-        # Removed st.rerun() to allow the success message to be displayed.
         st.session_state.page = "User Stories"
-#       st.rerun()
 
 # Tab 3: User Stories
 elif page == "User Stories":
@@ -136,15 +141,12 @@ elif page == "User Stories":
                     llm, messages = create_agent(system_prompt)
                     if llm:
                         st.session_state.user_stories = run_agent(llm, messages, brd_text_for_prompt)
-                        # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Acceptance Criteria"
-#                        st.rerun()
 
         if st.session_state.user_stories:
             st.subheader("Generated User Stories")
             st.text_area("User Stories", st.session_state.user_stories, height=500)
             
-            # Create a temporary file to download
             with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as temp_file:
                 temp_file.write(st.session_state.user_stories)
                 temp_file_path = temp_file.name
@@ -172,9 +174,7 @@ elif page == "Acceptance Criteria":
                     llm, messages = create_agent(system_prompt)
                     if llm:
                         st.session_state.acceptance_criteria = run_agent(llm, messages, st.session_state.user_stories)
-                        # Removed st.rerun() to allow the generated content to display.
                         st.session_state.page = "Test Cases"
-#                        st.rerun()
 
         if st.session_state.acceptance_criteria:
             st.subheader("Generated Acceptance Criteria")
@@ -222,7 +222,6 @@ elif page == "Test Cases":
                     if llm:
                         st.session_state.test_cases = run_agent(llm, messages, test_case_prompt)
                         st.session_state.page = "Code"
-#                       st.rerun()
 
         if st.session_state.test_cases:
             st.subheader("Generated Test Cases")
@@ -305,7 +304,6 @@ elif page == "Architecture Diagram":
         with col1:
             if st.button("Generate Diagram"):
                 with st.spinner("Generating architecture diagram..."):
-                    # This prompt is updated to use project details and generate a Mermaid script.
                     diagram_prompt = f"""
                     Given the following project details, create a Mermaid script for a software architecture diagram.
                     The diagram should be a high-level overview of the system's components and their interactions.
@@ -326,26 +324,20 @@ elif page == "Architecture Diagram":
                     if llm:
                         mermaid_script = run_agent(llm, messages, diagram_prompt)
                         st.session_state.mermaid_script = mermaid_script
-                        # Display the generated script and the rendered diagram
-                        st.subheader("Generated Mermaid Script")
-                        st.code(st.session_state.mermaid_script, language="markdown")
-                        st.subheader("Architecture Diagram Preview")
-                        st_mermaid(st.session_state.mermaid_script)
                         
-                        # Add download button for the mermaid script
-                        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".md") as temp_file:
-                            temp_file.write(st.session_state.mermaid_script)
-                            temp_file_path = temp_file.name
-                        
-                        st.download_button(
-                            label="Download Mermaid Script",
-                            data=open(temp_file_path, "rb").read(),
-                            file_name="architecture_diagram.md",
-                            mime="text/plain"
-                        )
-
         if st.session_state.mermaid_script:
             st.subheader("Generated Mermaid Script")
             st.code(st.session_state.mermaid_script, language="markdown")
             st.subheader("Architecture Diagram Preview")
             st_mermaid(st.session_state.mermaid_script)
+            
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".md") as temp_file:
+                temp_file.write(st.session_state.mermaid_script)
+                temp_file_path = temp_file.name
+            
+            st.download_button(
+                label="Download Mermaid Script",
+                data=open(temp_file_path, "rb").read(),
+                file_name="architecture_diagram.md",
+                mime="text/plain"
+            )
