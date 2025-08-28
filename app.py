@@ -38,6 +38,10 @@ if 'acceptance_criteria' not in st.session_state:
     st.session_state.acceptance_criteria = ""
 if 'test_cases' not in st.session_state:
     st.session_state.test_cases = ""
+if 'bdd_scripts' not in st.session_state:
+    st.session_state.bdd_scripts = ""
+if 'selenium_scripts' not in st.session_state:
+    st.session_state.selenium_scripts = ""
 if 'generated_code' not in st.session_state:
     st.session_state.generated_code = ""
 if 'mermaid_script' not in st.session_state:
@@ -78,10 +82,12 @@ page = st.sidebar.radio(
         "User Stories",
         "Acceptance Criteria",
         "Test Cases",
+        "BDD Scripts", # Added BDD Scripts tab
+        "Selenium Scripts", # Added Selenium Scripts tab
         "Code",
-        "Architecture Diagram" # Added the new tab
+        "Architecture Diagram"
     ],
-    index=["Project Details", "Upload BRD", "User Stories", "Acceptance Criteria", "Test Cases", "Code", "Architecture Diagram"].index(st.session_state.page)
+    index=["Project Details", "Upload BRD", "User Stories", "Acceptance Criteria", "Test Cases", "BDD Scripts", "Selenium Scripts", "Code", "Architecture Diagram"].index(st.session_state.page)
 )
 st.session_state.page = page
 
@@ -221,7 +227,7 @@ elif page == "Test Cases":
                     llm, messages = create_agent(system_prompt)
                     if llm:
                         st.session_state.test_cases = run_agent(llm, messages, test_case_prompt)
-                        st.session_state.page = "Code"
+                        st.session_state.page = "BDD Scripts" # Navigate to the new BDD Scripts tab
 
         if st.session_state.test_cases:
             st.subheader("Generated Test Cases")
@@ -238,7 +244,100 @@ elif page == "Test Cases":
                 mime="text/plain"
             )
 
-# Tab 6: Code
+# Tab 6: BDD Scripts
+elif page == "BDD Scripts":
+    st.header("Generate BDD Scripts")
+    if not st.session_state.test_cases:
+        st.warning("Please generate test cases in the previous tab first.")
+    else:
+        st.markdown("The AI agent will now convert the test cases into detailed BDD scripts using the Gherkin syntax.")
+
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("Generate BDD Scripts", disabled=not st.session_state.test_cases):
+                with st.spinner("Generating BDD scripts..."):
+                    bdd_prompt = f"""
+                    Based on the following test cases, generate detailed BDD scripts using the Gherkin format (Feature, Scenario, Given, When, Then, And).
+                    
+                    Instructions:
+                    - Create a clear 'Feature' for each main functionality.
+                    - For each test case, create a 'Scenario'.
+                    - Map the 'Preconditions' to 'Given'.
+                    - Map the 'Test Steps' to 'When'.
+                    - Map the 'Expected Result' to 'Then'.
+                    - Use 'And' to link related steps or conditions.
+                    
+                    Test Cases:
+                    {st.session_state.test_cases}
+                    """
+                    system_prompt = "You are an expert in Behavior-Driven Development (BDD). Your task is to transform provided test cases into professional and clear Gherkin feature files. Ensure the scripts are easy to read and follow BDD best practices."
+                    llm, messages = create_agent(system_prompt)
+                    if llm:
+                        st.session_state.bdd_scripts = run_agent(llm, messages, bdd_prompt)
+                        st.session_state.page = "Selenium Scripts" # Navigate to the new Selenium Scripts tab
+
+        if st.session_state.bdd_scripts:
+            st.subheader("Generated BDD Scripts")
+            st.text_area("BDD Scripts", st.session_state.bdd_scripts, height=500)
+
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".feature") as temp_file:
+                temp_file.write(st.session_state.bdd_scripts)
+                temp_file_path = temp_file.name
+
+            st.download_button(
+                label="Download BDD Scripts",
+                data=open(temp_file_path, "rb").read(),
+                file_name="bdd_scripts.feature",
+                mime="text/plain"
+            )
+
+# Tab 7: Selenium Scripts
+elif page == "Selenium Scripts":
+    st.header("Generate Selenium Scripts")
+    if not st.session_state.bdd_scripts or not st.session_state.project_details.get("Programming Language"):
+        st.warning("Please generate BDD scripts and specify a programming language first.")
+    else:
+        st.markdown(f"The AI agent will now generate automated Selenium scripts in **{st.session_state.project_details.get('Programming Language', 'Python')}** to automate the BDD scenarios.")
+        
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("Generate Selenium Scripts", disabled=not st.session_state.bdd_scripts):
+                with st.spinner("Generating Selenium scripts..."):
+                    selenium_prompt = f"""
+                    Based on the following BDD scripts, generate automated test scripts using Selenium WebDriver in {st.session_state.project_details.get('Programming Language', 'Python')}.
+                    
+                    Instructions:
+                    - Write a full, runnable script.
+                    - Use appropriate Selenium commands for navigation, element interaction, and assertions.
+                    - Include necessary imports (e.g., from selenium import webdriver, By).
+                    - Use a standard testing framework like pytest or unittest if applicable for the chosen language.
+                    - Structure the code to be clean, readable, and well-commented.
+                    
+                    BDD Scripts:
+                    {st.session_state.bdd_scripts}
+                    """
+                    system_prompt = f"You are a master of test automation. Your task is to write high-quality, fully functional Selenium WebDriver scripts in {st.session_state.project_details.get('Programming Language', 'Python')} to automate the provided BDD scenarios. Ensure the scripts are robust and follow best practices for test automation."
+                    llm, messages = create_agent(system_prompt)
+                    if llm:
+                        st.session_state.selenium_scripts = run_agent(llm, messages, selenium_prompt)
+                        st.session_state.page = "Code"
+
+        if st.session_state.selenium_scripts:
+            st.subheader("Generated Selenium Scripts")
+            st.code(st.session_state.selenium_scripts, language=st.session_state.project_details.get("Programming Language", "python").lower())
+            
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as temp_file:
+                temp_file.write(st.session_state.selenium_scripts)
+                temp_file_path = temp_file.name
+
+            st.download_button(
+                label="Download Selenium Scripts",
+                data=open(temp_file_path, "rb").read(),
+                file_name=f"selenium_tests.{st.session_state.project_details.get('Programming Language', 'python').lower()}",
+                mime="text/plain"
+            )
+
+# Tab 8: Code
 elif page == "Code":
     st.header("Generate Code")
     if not st.session_state.test_cases or not st.session_state.project_details.get("Programming Language"):
@@ -292,7 +391,7 @@ elif page == "Code":
                 mime="text/plain"
             )
 
-# Tab 7: Architecture Diagram (New)
+# Tab 9: Architecture Diagram (New)
 elif page == "Architecture Diagram":
     st.header("Generate Architecture Diagram")
     if not st.session_state.project_details.get("Project Name"):
