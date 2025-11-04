@@ -1,0 +1,82 @@
+Business Requirement Document (BRD) for Simple CRM Application
+1. Introduction
+Purpose: Define requirements for a simple CRM system to manage customer data, interactions, and sales pipeline.
+Scope: Web-based application with role-based access for Admin, Sales, and Support teams.
+Assumptions:
+* - Application will integrate with email and export data to Excel.
+* - GDPR compliance for data privacy.
+2. Functional Modules & Screens
+A. Login & User Management
+Functionalities:
+* Secure login with username/password.
+* Role-based dashboard (Admin, Sales, Support).
+* Password reset via email.
+Detailed Requirements:
+* Username must exist in the system.
+* Password complexity: Minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 number, 1 special character.
+* Account lock after 5 failed attempts.
+* Session timeout after 15 minutes of inactivity.
+* Password reset token expires in 30 minutes.
+B. Dashboard
+Functionalities:
+* Overview of leads, opportunities, and tasks.
+* Quick links to add customer or lead.
+Detailed Requirements:
+* Auto-refresh every 5 minutes.
+* Display KPIs based on user role.
+* Drill-down links to respective lists.
+C. Customer Management
+Functionalities:
+* Customer List: Search, filter, sort.
+* Customer Details: View and edit profile.
+Detailed Requirements:
+* Mandatory fields: Name, Email, Phone.
+* Email validation: Regex ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$.
+* Phone validation: Numeric, 10 digits.
+* Prevent duplicates based on Email.
+* Status options: Active, Inactive.
+* Audit trail for changes (who, when).
+D. Lead Management
+Functionalities:
+* Lead List: Filter by status (New, In Progress, Closed).
+* Lead Details: Assign to sales rep, update status.
+Detailed Requirements:
+* Status workflow: New ? In Progress ? Closed.
+* Mandatory fields: Lead Name, Source, Contact Info.
+* Assigned user must exist in system.
+* Source options: Website, Referral, Campaign.
+* Validate no duplicate leads for same customer.
+E. Opportunity Management
+Functionalities:
+* Opportunity List: Filter by stage (Prospect, Proposal, Won, Lost).
+* Opportunity Details: Link to customer and lead.
+Detailed Requirements:
+* Stage workflow: Prospect ? Proposal ? Won/Lost.
+* Probability auto-calculated: Prospect: 20%, Proposal: 50%, Won: 100%, Lost: 0%.
+* Amount must be numeric and > 0.
+* Linked Customer must exist in Customer table.
+F. Task Management
+Functionalities:
+* Task List: View tasks by due date.
+* Task Details: Assign, set priority.
+Detailed Requirements:
+* Due date cannot be in the past.
+* Priority options: High, Medium, Low.
+* Assigned user must exist in system.
+* Status options: Pending, Completed.
+G. Reports
+Functionalities:
+* Export customer and lead data to Excel.
+* Generate monthly sales report.
+Detailed Requirements:
+* Admin can export all data.
+* Sales users can export only their assigned leads.
+* Reports must include filters (date range, status).
+3. Non-Functional Requirements
+* - Performance: Page load < 3 seconds.
+* - Security: SSL, role-based access.
+* - Compliance: GDPR for customer data.
+* - Scalability: Support up to 10,000 records.
+4. Integrations
+* - Email notifications for lead assignment.
+* - API for external data sync (REST-based).
