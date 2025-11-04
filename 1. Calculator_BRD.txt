@@ -1,0 +1,60 @@
+Business Requirements Document: Simple Calculator Application
+
+1. Executive Summary
+This document outlines the business requirements for developing a simple command-line calculator application in Python. The primary goal is to create a reliable and user-friendly tool that can perform basic arithmetic operations. The application must handle valid numeric input, perform calculations accurately, and provide clear error messages for invalid input or operations. The target audience for this application is any user needing quick, simple calculations without a graphical interface.
+
+2. Project Objectives
+The project's key objectives are to:
+* Develop a functioning command-line calculator.
+* Allow users to perform addition, subtraction, multiplication, and division.
+* Ensure the application is robust and handles various user inputs correctly.
+* Implement comprehensive validation to prevent errors like division by zero or non-numeric input.
+* Provide a clear, easy-to-use interface.
+
+3. Project Scope
+In Scope
+* Basic Arithmetic Operations: The calculator will support +, -, *, and /.
+* Input Validation: The system will validate user input to ensure it is a valid number and a supported operator.
+* Error Handling: The system will display specific, helpful error messages for invalid operations.
+* Command-Line Interface: The application will run from a terminal or command prompt.
+* Continuous Operation: The calculator will allow multiple calculations in a single session until the user chooses to exit.
+
+Out of Scope
+* Graphical User Interface (GUI).
+* Advanced mathematical functions (e.g., trigonometry, exponents, logarithms).
+* Handling of complex numbers or scientific notation.
+* Storing or recalling previous calculations.
+* Negative number validation (the system should be able to process negative numbers).
+
+4. Key Stakeholders
+* Project Sponsor: The individual or team responsible for the project's funding and overall approval.
+* Business Analyst: The individual responsible for defining and documenting the business requirements.
+* Software Developer: The individual responsible for writing the Python code to meet the requirements.
+* Quality Assurance (QA) Analyst: The individual responsible for testing the application to ensure it meets all requirements and functions as expected.
+* End-Users: Individuals who will use the calculator for simple, everyday calculations.
+
+5. Functional Requirements
+
+5.1. User Interaction Requirements
+* FR-01: The application shall prompt the user to enter the first number.
+* FR-02: The application shall prompt the user to enter an arithmetic operator (+, -, *, /).
+* FR-03: The application shall prompt the user to enter the second number.
+* FR-04: The application shall display the result of the calculation.
+* FR-05: The application shall provide an option for the user to perform another calculation or exit.
+
+5.2. Calculation and Validation Requirements
+* FR-06: The application shall be able to perform addition, subtraction, multiplication, and division.
+* FR-07: The application must validate that the first and second inputs are valid numbers (integers or floats).
+* FR-08: If a user enters a non-numeric value, the application shall display an error message and reprompt for a valid number.
+* FR-09: The application must validate that the operator entered is one of the four supported operators (+, -, *, /).
+* FR-10: If a user enters an invalid operator, the application shall display an error message and reprompt for a valid operator.
+* FR-11: The application must prevent division by zero.
+* FR-12: If the user attempts to divide by zero, the application shall display a specific error message (e.g., "Error: Cannot divide by zero.") and return to the main menu.
+
+6. Non-Functional Requirements
+* NFR-01 (Performance): The application shall provide calculation results in under one second.
+* NFR-02 (Usability): The application's interface shall be simple, intuitive, and easy for non-technical users to understand.
+* NFR-03 (Maintainability): The code should be well-commented and organized to allow for future enhancements and bug fixes.
+* NFR-04 (Portability): The application shall be executable on any standard operating system with a Python interpreter installed.
+* NFR-05 (Reliability): The application shall not crash or terminate due to invalid user input or operations.
+
